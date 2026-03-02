@@ -1,9 +1,18 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import Response
+from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import os
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 NIM_API_KEY = os.environ["NIM_API_KEY"]
 NIM_BASE_URL = "https://integrate.api.nvidia.com/v1"
