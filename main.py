@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Request
+from fastapi.responses import Response
 import httpx
 import os
 
@@ -14,6 +15,7 @@ async def proxy(path: str, request: Request):
         "Authorization": f"Bearer {NIM_API_KEY}",
         "Content-Type": "application/json",
     }
+
     async with httpx.AsyncClient(timeout=120) as client:
         resp = await client.request(
             method=request.method,
@@ -21,4 +23,9 @@ async def proxy(path: str, request: Request):
             content=body,
             headers=headers,
         )
-    return resp.json()
+
+    return Response(
+        content=resp.content,
+        status_code=resp.status_code,
+        headers=dict(resp.headers),
+    )
