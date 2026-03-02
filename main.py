@@ -25,16 +25,14 @@ async def proxy(path: str, request: Request):
         "Content-Type": "application/json",
     }
 
-    async with httpx.AsyncClient(timeout=120) as client:
-        resp = await client.request(
-            method=request.method,
-            url=f"{NIM_BASE_URL}/{path}",
-            content=body,
-            headers=headers,
-        )
+async with httpx.AsyncClient(timeout=120) as client:
+    clean_path = path.lstrip("/")
+    if clean_path.startswith("v1/"):
+        clean_path = clean_path[3:]
 
-    return Response(
-        content=resp.content,
-        status_code=resp.status_code,
-        headers=dict(resp.headers),
+    resp = await client.request(
+        method=request.method,
+        url=f"{NIM_BASE_URL}/{clean_path}",
+        content=body,
+        headers=headers,
     )
